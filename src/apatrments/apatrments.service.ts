@@ -28,7 +28,7 @@ export class ApatrmentsService {
   async update(id: string, updateApatrmentDto: UpdateApatrmentDto) {
     const modifiedApartment = await this.apartmentModel
       .findByIdAndUpdate(id, updateApatrmentDto)
-      .setOptions({ overwrite: true, new: true, runValidators: true });
+      .setOptions({ new: true });
     if (!modifiedApartment)
       throw new NotFoundException(id, 'apartment not found');
     return modifiedApartment;

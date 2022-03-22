@@ -28,7 +28,7 @@ export class ContactsService {
   async update(id: string, updateContactDto: UpdateContactDto) {
     const modifiedDocument = await this.contactModel
       .findByIdAndUpdate(id, updateContactDto)
-      .setOptions({ overwrite: true, new: true, runValidators: true });
+      .setOptions({ new: true });
     if (!modifiedDocument) throw new NotFoundException(id, 'contact not found');
     return modifiedDocument;
   }
