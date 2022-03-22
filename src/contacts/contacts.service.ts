@@ -1,15 +1,9 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact } from './schemas/contact.schema';
-import { Model, Error } from 'mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class ContactsService {

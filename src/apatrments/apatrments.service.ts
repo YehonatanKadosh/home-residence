@@ -11,8 +11,8 @@ export class ApatrmentsService {
     @InjectModel(Apartment.name) private apartmentModel: Model<Apartment>,
   ) {}
   async create(createApatrmentDto: CreateApatrmentDto) {
-    const createdContact = new this.apartmentModel(createApatrmentDto);
-    return await createdContact.save();
+    const createdApartment = new this.apartmentModel(createApatrmentDto);
+    return await createdApartment.save();
   }
 
   async findAll() {
@@ -20,20 +20,24 @@ export class ApatrmentsService {
   }
 
   async findOne(id: string) {
-    const contact = await this.apartmentModel.findById(id);
-    if (!contact) throw new NotFoundException(id, 'contact not found');
-    return contact;
+    const apartment = await this.apartmentModel.findById(id);
+    if (!apartment) throw new NotFoundException(id, 'apartment not found');
+    return apartment;
   }
 
   async update(id: string, updateApatrmentDto: UpdateApatrmentDto) {
-    const modifiedDocument = await this.apartmentModel
+    const modifiedApartment = await this.apartmentModel
       .findByIdAndUpdate(id, updateApatrmentDto)
       .setOptions({ overwrite: true, new: true, runValidators: true });
-    if (!modifiedDocument) throw new NotFoundException(id, 'contact not found');
-    return modifiedDocument;
+    if (!modifiedApartment)
+      throw new NotFoundException(id, 'apartment not found');
+    return modifiedApartment;
   }
 
   async remove(id: string) {
-    return await this.apartmentModel.findByIdAndRemove(id);
+    const removedApartment = await this.apartmentModel.findByIdAndRemove(id);
+    if (!removedApartment)
+      throw new NotFoundException(id, 'apartment not found');
+    return removedApartment;
   }
 }
