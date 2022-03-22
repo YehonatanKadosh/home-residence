@@ -25,43 +25,43 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
-  @ApiBadRequestResponse()
-  @ApiCreatedResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiCreatedResponse({ description: 'Created New Contact' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post()
   async create(@Body() createContactDto: CreateContactDto) {
     return await this.contactsService.create(createContactDto);
   }
 
-  @ApiOkResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
   findAll() {
     return this.contactsService.findAll();
   }
 
-  @ApiOkResponse()
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Contact Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.contactsService.findOne(id);
   }
 
-  @ApiOkResponse()
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Contact Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
     return this.contactsService.update(id, updateContactDto);
   }
 
-  @ApiOkResponse()
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Contact Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.contactsService.remove(id);

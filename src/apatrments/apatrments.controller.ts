@@ -7,7 +7,15 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
@@ -17,24 +25,34 @@ import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
 export class ApatrmentsController {
   constructor(private readonly apatrmentsService: ApatrmentsService) {}
 
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 201, description: 'Created' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @ApiCreatedResponse({ description: 'Created New Apartment' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post()
   create(@Body() createApatrmentDto: CreateApatrmentDto) {
     return this.apatrmentsService.create(createApatrmentDto);
   }
 
+  @ApiOkResponse({ description: 'OK' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
   findAll() {
     return this.apatrmentsService.findAll();
   }
 
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Apartment Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.apatrmentsService.findOne(id);
   }
 
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Apartment Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -43,6 +61,10 @@ export class ApatrmentsController {
     return this.apatrmentsService.update(id, updateApatrmentDto);
   }
 
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Apartment Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.apatrmentsService.remove(id);
