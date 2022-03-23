@@ -6,20 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
 
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @ApiTags('apatrments')
 @Controller('apatrments')
 export class ApatrmentsController {

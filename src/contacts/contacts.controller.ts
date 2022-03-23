@@ -6,21 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 
+@ApiBearerAuth('access-token')
 @ApiTags('contacts')
+@UseGuards(JwtAuthGuard)
 @Controller('contacts')
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
@@ -29,8 +33,8 @@ export class ContactsController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post()
-  async create(@Body() createContactDto: CreateContactDto) {
-    return await this.contactsService.create(createContactDto);
+  create(@Body() createContactDto: CreateContactDto) {
+    return this.contactsService.create(createContactDto);
   }
 
   @ApiOkResponse({ description: 'OK' })
