@@ -30,13 +30,9 @@ export class CreateContactDto {
   })
   PhoneNumber: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'The appartment number of a contact',
-    required: true,
-  })
-  AppartmentNumber: number;
+  @IsString()
+  @ApiProperty({ description: 'The apartment of a contact' })
+  Apartment: string;
 
   @IsArray()
   @IsNotEmpty()

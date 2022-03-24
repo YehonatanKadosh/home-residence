@@ -2,7 +2,6 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsArray,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -31,18 +30,13 @@ export class UpdateContactDto extends PartialType(CreateContactDto) {
   @IsOptional()
   @ApiProperty({
     description: 'The phone number of a contact',
-    required: true,
   })
   PhoneNumber: string;
 
-  @IsNumber()
-  @IsNotEmpty()
+  @IsString()
   @IsOptional()
-  @ApiProperty({
-    description: 'The appartment number of a contact',
-    required: true,
-  })
-  AppartmentNumber: number;
+  @ApiProperty({ description: 'The apartment of a contact' })
+  Apartment: string;
 
   @IsArray()
   @IsNotEmpty()
