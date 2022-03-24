@@ -22,7 +22,10 @@ export class RolesGuard extends AuthGuard('admin') {
     const request = context.switchToHttp().getRequest();
     const user: Partial<User> = request.user;
 
-    if (!requiredRoles.includes(user.role)) throw new UnauthorizedException();
+    if (!requiredRoles.includes(user.role))
+      throw new UnauthorizedException(
+        `premissions unsetisfied for user with "${user.role}" role`,
+      );
     return true;
   }
 }
