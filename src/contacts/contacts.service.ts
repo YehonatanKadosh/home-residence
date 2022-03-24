@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -11,18 +15,30 @@ export class ContactsService {
     @InjectModel(Contact.name) private contactModel: Model<Contact>,
   ) {}
   async create(createContactDto: CreateContactDto): Promise<Contact> {
+    const contactsAmount: number = await this.contactModel.countDocuments();
+    if (contactsAmount === 1000)
+      throw new ForbiddenException(
+        'cannot create, contact list reached 1000 contacts',
+      );
+
     const createdContact = new this.contactModel(createContactDto);
     return await createdContact.save();
   }
 
   async findAll() {
-    return await this.contactModel.find();
+    return await this.contactModel.find().populate('Apartment');
   }
 
   async findOne(id: string) {
-    const contact = await this.contactModel.findById(id);
+    const contact = await this.contactModel.findById(id).populate('Apartment');
     if (!contact) throw new NotFoundException(id, 'contact not found');
     return contact;
+  }
+
+  async findOneByApartment(apartmentId: string) {
+    return await this.contactModel
+      .findOne({ Apartment: apartmentId })
+      .populate('Apartment');
   }
 
   async update(id: string, updateContactDto: UpdateContactDto) {
@@ -37,5 +53,9 @@ export class ContactsService {
     const removedDocument = await this.contactModel.findByIdAndRemove(id);
     if (!removedDocument) throw new NotFoundException(id, 'contact not found');
     return removedDocument;
+  }
+
+  async removeAll() {
+    return await this.contactModel.remove();
   }
 }
