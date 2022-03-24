@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -43,6 +44,21 @@ export class ContactsController {
   @Post()
   create(@Body() createContactDto: CreateContactDto) {
     return this.contactsService.create(createContactDto);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiCreatedResponse({ description: 'Created New Contact' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Post('/multiple')
+  createMany(@Body() createContactDto: CreateContactDto[]) {
+    if (!Array.isArray(createContactDto))
+      throw new BadRequestException('/multiple rout accepts contact list');
+    return createContactDto.map((contact) =>
+      this.contactsService.create(contact),
+    );
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
