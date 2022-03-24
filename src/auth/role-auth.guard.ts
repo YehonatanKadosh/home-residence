@@ -1,4 +1,8 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, User } from 'src/users/schemas/user.schema';
@@ -18,6 +22,7 @@ export class RolesGuard extends AuthGuard('admin') {
     const request = context.switchToHttp().getRequest();
     const user: Partial<User> = request.user;
 
-    return requiredRoles.includes(user.role);
+    if (!requiredRoles.includes(user.role)) throw new UnauthorizedException();
+    return true;
   }
 }
