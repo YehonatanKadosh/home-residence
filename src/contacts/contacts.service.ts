@@ -21,6 +21,16 @@ export class ContactsService {
         'cannot create, contact list reached 1000 contacts',
       );
 
+    const savedContact: Contact = await this.contactModel.findOne({
+      PhoneNumber: createContactDto.PhoneNumber,
+    });
+    if (savedContact) {
+      const { FirstName, LastName, PhoneNumber } = savedContact;
+      throw new ForbiddenException(
+        `found similar phone number: ${PhoneNumber} for both ${FirstName} ${LastName} and ${createContactDto.FirstName} ${createContactDto.LastName}`,
+      );
+    }
+
     const createdContact = new this.contactModel(createContactDto);
     return await createdContact.save();
   }
