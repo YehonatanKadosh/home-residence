@@ -24,6 +24,7 @@ export class Contact {
       message: (props: any) => `${props.value} is not a valid phone number!`,
     },
     required: [true, 'Contact phone number required'],
+    unique: true,
   })
   PhoneNumber: string;
 
