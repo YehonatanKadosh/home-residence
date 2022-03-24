@@ -28,7 +28,7 @@ export class ApatrmentsService {
 
   async findOne(id: string) {
     const apartment = await this.apartmentModel.findById(id);
-    if (!apartment) throw new NotFoundException(id, 'apartment not found');
+    if (!apartment) throw new NotFoundException('apartment not found', id);
     return apartment;
   }
 
@@ -37,7 +37,7 @@ export class ApatrmentsService {
       .findByIdAndUpdate(id, updateApatrmentDto)
       .setOptions({ new: true });
     if (!modifiedApartment)
-      throw new NotFoundException(id, 'apartment not found');
+      throw new NotFoundException('apartment not found', id);
     return modifiedApartment;
   }
 
