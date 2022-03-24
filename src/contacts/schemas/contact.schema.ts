@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Apartment } from 'src/apatrments/schemas/apatrment.schema';
 
 export type ContactDocument = Contact & Document;
 export enum Pet {
@@ -26,8 +27,12 @@ export class Contact {
   })
   PhoneNumber: string;
 
-  @Prop({ required: [true, 'Contact appartment number required'] })
-  AppartmentNumber: number;
+  @Prop({
+    required: [true, 'Contact apartment required'],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Apartment',
+  })
+  Apartment: Apartment;
 
   @Prop({
     type: [String],
