@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,10 +17,11 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/role-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Roles } from 'src/custom.decorator';
+import { Roles, SkipJWTAuth } from 'src/custom.decorator';
 import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
@@ -34,6 +36,7 @@ export class ApatrmentsController {
 
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiCreatedResponse({ description: 'Created New Apartment' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
@@ -42,6 +45,7 @@ export class ApatrmentsController {
     return this.apatrmentsService.create(createApatrmentDto);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
@@ -49,6 +53,7 @@ export class ApatrmentsController {
     return this.apatrmentsService.findAll();
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })
@@ -60,6 +65,7 @@ export class ApatrmentsController {
 
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })
@@ -74,6 +80,7 @@ export class ApatrmentsController {
 
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })
@@ -81,5 +88,16 @@ export class ApatrmentsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.apatrmentsService.remove(id);
+  }
+
+  @SkipJWTAuth()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Delete('root/:secret')
+  removeAll(@Param('secret') secret: string) {
+    if (secret !== process.env.SECRET)
+      throw new UnauthorizedException('secret key not matched');
+    return this.apatrmentsService.removeAll();
   }
 }
