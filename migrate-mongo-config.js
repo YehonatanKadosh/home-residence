@@ -3,7 +3,7 @@
 const config = {
   mongodb: {
     // TODO Change (or review) the url to your MongoDB:
-    url: process.env.MONGO_KEY || 'mongodb://localhost:27017/home-residence',
+    url: process.env.MONGO_KEY || 'mongodb://localhost:27017/home-resident',
 
     options: {
       useNewUrlParser: true, // removes a deprecation warning when connecting
