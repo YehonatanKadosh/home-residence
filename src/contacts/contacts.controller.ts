@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,10 +17,11 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/role-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Roles } from 'src/custom.decorator';
+import { Roles, SkipJWTAuth } from 'src/custom.decorator';
 import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
@@ -34,6 +36,7 @@ export class ContactsController {
 
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiCreatedResponse({ description: 'Created New Contact' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
@@ -42,6 +45,7 @@ export class ContactsController {
     return this.contactsService.create(createContactDto);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
@@ -49,6 +53,7 @@ export class ContactsController {
     return this.contactsService.findAll();
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
@@ -60,6 +65,7 @@ export class ContactsController {
 
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
@@ -69,8 +75,20 @@ export class ContactsController {
     return this.contactsService.update(id, updateContactDto);
   }
 
+  @SkipJWTAuth()
+  @ApiOkResponse({ description: 'OK' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Delete('root/:secret')
+  removeAll(@Param('secret') secret: string) {
+    if (secret !== process.env.SECRET)
+      throw new UnauthorizedException('secret key not matched');
+    return this.contactsService.removeAll();
+  }
+
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
