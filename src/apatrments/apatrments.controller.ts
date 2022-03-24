@@ -17,7 +17,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RolesGuard } from 'src/auth/admin-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/custom.decorator';
+import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
@@ -29,6 +32,8 @@ import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
 export class ApatrmentsController {
   constructor(private readonly apatrmentsService: ApatrmentsService) {}
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiCreatedResponse({ description: 'Created New Apartment' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
@@ -53,6 +58,8 @@ export class ApatrmentsController {
     return this.apatrmentsService.findOne(id);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })
@@ -65,6 +72,8 @@ export class ApatrmentsController {
     return this.apatrmentsService.update(id, updateApatrmentDto);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })

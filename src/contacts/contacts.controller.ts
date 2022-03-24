@@ -17,7 +17,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RolesGuard } from 'src/auth/admin-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/custom.decorator';
+import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -29,6 +32,8 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiCreatedResponse({ description: 'Created New Contact' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
@@ -53,6 +58,8 @@ export class ContactsController {
     return this.contactsService.findOne(id);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
@@ -62,6 +69,8 @@ export class ContactsController {
     return this.contactsService.update(id, updateContactDto);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
   @ApiOkResponse({ description: 'OK' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
