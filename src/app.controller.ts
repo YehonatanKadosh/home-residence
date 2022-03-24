@@ -2,7 +2,6 @@ import { Controller, Request, Post, UseGuards, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
-import { SkipJWTAuth } from './custom.decorator';
 import { LoginDto } from './dto/login.dto';
 
 @ApiTags('app')
@@ -10,7 +9,6 @@ import { LoginDto } from './dto/login.dto';
 export class AppController {
   constructor(private authService: AuthService) {}
 
-  // @SkipJWTAuth()
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(@Body() loginDto: LoginDto, @Request() req) {
