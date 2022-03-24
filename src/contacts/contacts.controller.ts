@@ -17,7 +17,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RolesGuard } from 'src/auth/admin-auth.guard';
+import { RolesGuard } from 'src/auth/role-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/custom.decorator';
 import { Roles as userRoles } from 'src/users/schemas/user.schema';
