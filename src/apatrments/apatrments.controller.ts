@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
   UnauthorizedException,
-  BadRequestException,
   Query,
 } from '@nestjs/common';
 import {
@@ -28,6 +27,7 @@ import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
+import { RazeBuildingRentDto } from './dto/raze-building-rent.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -50,7 +50,7 @@ export class ApatrmentsController {
   @UseGuards(RolesGuard)
   @Roles(userRoles.Admin)
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiCreatedResponse({ description: 'Created New Contact' })
+  @ApiCreatedResponse({ description: 'Created New Contacts' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post('/multiple')
@@ -74,6 +74,34 @@ export class ApatrmentsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.apatrmentsService.findOne(id);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiCreatedResponse({ description: 'Updated Rent' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Patch('/razeRent')
+  razeRent(@Query('id') id: string, @Query('precentage') precentage: number) {
+    return this.apatrmentsService.razeRent(id, precentage);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiCreatedResponse({ description: 'Updated Rent' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Patch('/razeBuildingRent')
+  razeBuildingRent(
+    @Query('precentage') precentage: number,
+    @Body() razeBuildingRentDto: RazeBuildingRentDto,
+  ) {
+    return this.apatrmentsService.razeBuildingRent(
+      razeBuildingRentDto,
+      precentage,
+    );
   }
 
   @UseGuards(RolesGuard)
