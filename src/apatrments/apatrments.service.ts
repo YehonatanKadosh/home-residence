@@ -22,6 +22,15 @@ export class ApatrmentsService {
     return await createdApartment.save();
   }
 
+  async createMany(createContactDto: CreateApatrmentDto[]) {
+    const createdContacts = [];
+    for (let i = 0; i < createContactDto.length; i++) {
+      const contact = createContactDto[i];
+      createdContacts.push(await this.create(contact));
+    }
+    return createdContacts;
+  }
+
   async findAll() {
     return await this.apartmentModel.find();
   }
@@ -68,9 +77,13 @@ export class ApatrmentsService {
     if (!apartments.length)
       throw new NotFoundException('No apartments found on asked location');
 
-    return apartments.map(
-      async (apartment) => await this.remove(apartment._id.toString()),
-    );
+    const removedApartments = [];
+    for (let i = 0; i < apartments.length; i++) {
+      const apartment = apartments[i];
+      removedApartments.push(await this.remove(apartment._id.toString()));
+    }
+
+    return removedApartments;
   }
 
   async removeAll() {

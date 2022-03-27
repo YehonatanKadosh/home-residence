@@ -54,11 +54,7 @@ export class ContactsController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post('/multiple')
   createMany(@Body() createContactDto: CreateContactDto[]) {
-    if (!Array.isArray(createContactDto))
-      throw new BadRequestException('/multiple rout accepts contact list');
-    return createContactDto.map((contact) =>
-      this.contactsService.create(contact),
-    );
+    return this.contactsService.createMany(createContactDto);
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

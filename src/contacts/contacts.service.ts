@@ -42,6 +42,15 @@ export class ContactsService {
     return await createdContact.save();
   }
 
+  async createMany(createContactDto: CreateContactDto[]) {
+    const createdContacts = [];
+    for (let i = 0; i < createContactDto.length; i++) {
+      const contact = createContactDto[i];
+      createdContacts.push(await this.create(contact));
+    }
+    return createdContacts;
+  }
+
   async findAll() {
     return await this.contactModel.find().populate('Apartment');
   }

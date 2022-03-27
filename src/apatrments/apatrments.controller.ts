@@ -55,11 +55,7 @@ export class ApatrmentsController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post('/multiple')
   createMany(@Body() createContactDto: CreateApatrmentDto[]) {
-    if (!Array.isArray(createContactDto))
-      throw new BadRequestException('/multiple rout accepts contact list');
-    return createContactDto.map((contact) =>
-      this.apatrmentsService.create(contact),
-    );
+    return this.apatrmentsService.createMany(createContactDto);
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
