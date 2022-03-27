@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class RazeBuildingRentDto {
+export class BuildingDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: "The building's city", required: true })
