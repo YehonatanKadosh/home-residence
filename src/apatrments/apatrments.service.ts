@@ -10,6 +10,7 @@ import { Apartment, ApartmentDocument } from './schemas/apatrment.schema';
 import { Model } from 'mongoose';
 import { ContactsService } from 'src/contacts/contacts.service';
 import { Contact } from 'src/contacts/schemas/contact.schema';
+import { RazeBuildingRentDto } from './dto/raze-building-rent.dto';
 
 @Injectable()
 export class ApatrmentsService {
@@ -17,6 +18,7 @@ export class ApatrmentsService {
     @InjectModel(Apartment.name) private apartmentModel: Model<Apartment>,
     private contactsService: ContactsService,
   ) {}
+
   async create(createApatrmentDto: CreateApatrmentDto) {
     const createdApartment = new this.apartmentModel(createApatrmentDto);
     return await createdApartment.save();
@@ -35,7 +37,7 @@ export class ApatrmentsService {
     return await this.apartmentModel.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ApartmentDocument> {
     const apartment = await this.apartmentModel.findById(id);
     if (!apartment) throw new NotFoundException('apartment not found', id);
     return apartment;
@@ -88,5 +90,40 @@ export class ApatrmentsService {
 
   async removeAll() {
     return await this.apartmentModel.remove();
+  }
+
+  async razeRent(id: string, precentage: number) {
+    const apartment = await this.findOne(id);
+    const newRent = apartment.Rent * (1 + precentage / 100);
+
+    const modifiedApartment = await this.apartmentModel
+      .findByIdAndUpdate(id, { Rent: newRent })
+      .setOptions({ new: true });
+
+    return modifiedApartment;
+  }
+
+  async razeBuildingRent(
+    razeBuildingRentDto: RazeBuildingRentDto,
+    precentage: number,
+  ) {
+    const apartments: ApartmentDocument[] = await this.apartmentModel.find(
+      razeBuildingRentDto,
+    );
+
+    if (!apartments.length)
+      throw new NotFoundException('No apartments found on asked location');
+
+    const modifiedApartments = [];
+    for (let i = 0; i < apartments.length; i++) {
+      const apartment = apartments[i];
+      const newRent = apartment.Rent * (1 + precentage / 100);
+
+      const modifiedApartment = await this.apartmentModel
+        .findByIdAndUpdate(apartment._id.toString(), { Rent: newRent })
+        .setOptions({ new: true });
+      modifiedApartments.push(modifiedApartment);
+    }
+    return modifiedApartments;
   }
 }
