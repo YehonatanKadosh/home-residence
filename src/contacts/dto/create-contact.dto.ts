@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   Matches,
@@ -31,7 +31,8 @@ export class CreateContactDto {
   PhoneNumber: string;
 
   @IsString()
-  @ApiProperty({ description: 'The apartment of a contact' })
+  @IsOptional()
+  @ApiProperty({ description: 'The apartment of a contact', required: false })
   Apartment: string;
 
   @IsArray()
