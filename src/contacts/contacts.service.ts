@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
-import { Contact } from './schemas/contact.schema';
+import { Contact, ContactDocument } from './schemas/contact.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
@@ -14,6 +14,13 @@ export class ContactsService {
   constructor(
     @InjectModel(Contact.name) private contactModel: Model<Contact>,
   ) {}
+
+  async findOneByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<ContactDocument | null> {
+    return await this.contactModel.findOne({ PhoneNumber: phoneNumber });
+  }
+
   async create(createContactDto: CreateContactDto): Promise<Contact> {
     const contactsAmount: number = await this.contactModel.countDocuments();
     if (contactsAmount === 1000)
@@ -21,9 +28,9 @@ export class ContactsService {
         'cannot create, contact list reached 1000 contacts',
       );
 
-    const savedContact: Contact = await this.contactModel.findOne({
-      PhoneNumber: createContactDto.PhoneNumber,
-    });
+    const savedContact: Contact = await this.findOneByPhoneNumber(
+      createContactDto.PhoneNumber,
+    );
     if (savedContact) {
       const { FirstName, LastName, PhoneNumber } = savedContact;
       throw new ForbiddenException(
@@ -39,19 +46,33 @@ export class ContactsService {
     return await this.contactModel.find().populate('Apartment');
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ContactDocument | null> {
     const contact = await this.contactModel.findById(id).populate('Apartment');
     if (!contact) throw new NotFoundException(id, 'contact not found');
     return contact;
   }
 
-  async findOneByApartment(apartmentId: string) {
+  async findOneByApartment(
+    apartmentId: string,
+  ): Promise<ContactDocument | null> {
     return await this.contactModel
       .findOne({ Apartment: apartmentId })
       .populate('Apartment');
   }
 
   async update(id: string, updateContactDto: UpdateContactDto) {
+    if (updateContactDto.PhoneNumber) {
+      const savedContact: ContactDocument = await this.findOneByPhoneNumber(
+        updateContactDto.PhoneNumber,
+      );
+      if (savedContact && savedContact._id.toString() !== id) {
+        const { PhoneNumber, FirstName, LastName } = savedContact;
+        throw new ForbiddenException(
+          `found similar phone number: ${PhoneNumber} for both ${FirstName} ${LastName} and updating user with Id: ${id}`,
+        );
+      }
+    }
+
     const modifiedDocument = await this.contactModel
       .findByIdAndUpdate(id, updateContactDto)
       .setOptions({ new: true });
@@ -62,6 +83,15 @@ export class ContactsService {
   async remove(id: string) {
     const removedDocument = await this.contactModel.findByIdAndRemove(id);
     if (!removedDocument) throw new NotFoundException(id, 'contact not found');
+    return removedDocument;
+  }
+
+  async removeByPhoneNumber(phoneNumber: string) {
+    const removedDocument = await this.contactModel.findOneAndRemove({
+      PhoneNumber: phoneNumber,
+    });
+    if (!removedDocument)
+      throw new NotFoundException(phoneNumber, 'contact not found');
     return removedDocument;
   }
 
