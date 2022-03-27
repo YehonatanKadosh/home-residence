@@ -109,8 +109,8 @@ export class ContactsController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @Delete('/phoneNumber/:phoneNumber')
-  removeByPhoneNumber(@Param('phoneNumber') phoneNumber: string) {
+  @Delete('/phone/:number')
+  removeByPhoneNumber(@Param('number') phoneNumber: string) {
     return this.contactsService.removeByPhoneNumber(phoneNumber);
   }
 
