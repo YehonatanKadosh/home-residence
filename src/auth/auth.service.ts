@@ -15,14 +15,15 @@ export class AuthService {
     if (!user) throw new BadRequestException('user not found');
     if (user.password !== enteredPassword)
       throw new BadRequestException('password incorrect');
-    const { username, role, _id } = user;
-    return { username, role, _id };
+    const { role, _id } = user;
+    return { role, _id };
   }
 
   async login(user: Partial<User>) {
     // Note: we choose a property name of sub to hold our userId value
     // to be consistent with JWT standards
-    const payload = { sub: user._id, role: user.role };
+    const { role, _id } = user;
+    const payload = { sub: _id, role: role };
     const access_token = this.jwtService.sign(payload);
     return { access_token };
   }
