@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   DocumentBuilder,
@@ -38,7 +39,7 @@ async function bootstrap() {
 
   // handle mongoose errors
   app.useGlobalFilters(new MongooseException());
-
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();
