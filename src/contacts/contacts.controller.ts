@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
   UnauthorizedException,
-  BadRequestException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -61,8 +61,8 @@ export class ContactsController {
   @ApiOkResponse({ description: 'OK' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
-  findAll() {
-    return this.contactsService.findAll();
+  findAll(@Query() filter: UpdateContactDto) {
+    return this.contactsService.findAll(filter);
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
