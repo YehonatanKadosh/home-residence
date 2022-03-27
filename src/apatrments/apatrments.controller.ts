@@ -9,6 +9,7 @@ import {
   UseGuards,
   UnauthorizedException,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -92,6 +93,22 @@ export class ApatrmentsController {
     @Body() updateApatrmentDto: UpdateApatrmentDto,
   ) {
     return this.apatrmentsService.update(id, updateApatrmentDto);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Apartment Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Delete('/building')
+  removeByBuilding(
+    @Query('city') city: string,
+    @Query('street') street: string,
+    @Query('buildingNumber') buildingNumber: number,
+  ) {
+    return this.apatrmentsService.removeBuilding(city, street, buildingNumber);
   }
 
   @UseGuards(RolesGuard)
