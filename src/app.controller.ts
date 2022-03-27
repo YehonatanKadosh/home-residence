@@ -11,6 +11,6 @@ export class AppController {
   @Post('/login')
   async login(@Body() { password, username }: LoginDto) {
     const user = await this.authService.validateUser(username, password);
-    return this.authService.getJWT(user);
+    return this.authService.signJWT(user);
   }
 }

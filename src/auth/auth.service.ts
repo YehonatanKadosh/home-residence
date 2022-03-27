@@ -19,7 +19,7 @@ export class AuthService {
     return { role, _id };
   }
 
-  async getJWT({ role, _id }: Partial<User>) {
+  async signJWT({ role, _id }: Partial<User>) {
     // Note: we choose a property name of sub to hold our userId value
     // to be consistent with JWT standards
     const payload = { sub: _id, role };
