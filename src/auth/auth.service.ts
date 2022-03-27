@@ -10,20 +10,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(enteredUsername: string, enteredPassword: string) {
-    const user = await this.usersService.findOne(enteredUsername);
+  async validateUser(username: string, password: string) {
+    const user = await this.usersService.findOne(username);
     if (!user) throw new BadRequestException('user not found');
-    if (user.password !== enteredPassword)
+    if (user.password !== password)
       throw new BadRequestException('password incorrect');
     const { role, _id } = user;
     return { role, _id };
   }
 
-  async login(user: Partial<User>) {
+  async getJWT({ role, _id }: Partial<User>) {
     // Note: we choose a property name of sub to hold our userId value
     // to be consistent with JWT standards
-    const { role, _id } = user;
-    const payload = { sub: _id, role: role };
+    const payload = { sub: _id, role };
     const access_token = this.jwtService.sign(payload);
     return { access_token };
   }
