@@ -29,7 +29,7 @@ export class Contact {
   PhoneNumber: string;
 
   @Prop({
-    required: [true, 'Contact apartment required'],
+    required: false,
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Apartment',
   })
