@@ -27,7 +27,7 @@ import { Roles as userRoles } from 'src/users/schemas/user.schema';
 import { ApatrmentsService } from './apatrments.service';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
-import { RazeBuildingRentDto } from './dto/raze-building-rent.dto';
+import { BuildingDto } from './dto/building.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -62,8 +62,8 @@ export class ApatrmentsController {
   @ApiOkResponse({ description: 'OK' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
-  findAll() {
-    return this.apatrmentsService.findAll();
+  findAll(@Query() filter: UpdateApatrmentDto) {
+    return this.apatrmentsService.findAll(filter);
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -96,12 +96,9 @@ export class ApatrmentsController {
   @Patch('/razeBuildingRent')
   razeBuildingRent(
     @Query('precentage') precentage: number,
-    @Body() razeBuildingRentDto: RazeBuildingRentDto,
+    @Body() buildingDto: BuildingDto,
   ) {
-    return this.apatrmentsService.razeBuildingRent(
-      razeBuildingRentDto,
-      precentage,
-    );
+    return this.apatrmentsService.razeBuildingRent(buildingDto, precentage);
   }
 
   @UseGuards(RolesGuard)
@@ -127,12 +124,8 @@ export class ApatrmentsController {
   @ApiNotFoundResponse({ description: 'Apartment Not Found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Delete('/building')
-  removeByBuilding(
-    @Query('city') city: string,
-    @Query('street') street: string,
-    @Query('buildingNumber') buildingNumber: number,
-  ) {
-    return this.apatrmentsService.removeBuilding(city, street, buildingNumber);
+  removeByBuilding(@Query() building: BuildingDto) {
+    return this.apatrmentsService.removeBuilding(building);
   }
 
   @UseGuards(RolesGuard)

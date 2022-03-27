@@ -7,10 +7,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
 import { Apartment, ApartmentDocument } from './schemas/apatrment.schema';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 import { ContactsService } from 'src/contacts/contacts.service';
 import { Contact } from 'src/contacts/schemas/contact.schema';
-import { RazeBuildingRentDto } from './dto/raze-building-rent.dto';
+import { BuildingDto } from './dto/building.dto';
 
 @Injectable()
 export class ApatrmentsService {
@@ -33,8 +33,8 @@ export class ApatrmentsService {
     return createdContacts;
   }
 
-  async findAll() {
-    return await this.apartmentModel.find();
+  async findAll(filter: FilterQuery<Contact>) {
+    return await this.apartmentModel.find(filter);
   }
 
   async findOne(id: string): Promise<ApartmentDocument> {
@@ -69,12 +69,10 @@ export class ApatrmentsService {
     return removedApartment;
   }
 
-  async removeBuilding(city: string, street: string, buildingNumber: number) {
-    const apartments: ApartmentDocument[] = await this.apartmentModel.find({
-      City: city,
-      Street: street,
-      BuildingNumber: buildingNumber,
-    });
+  async removeBuilding(building: BuildingDto) {
+    const apartments: ApartmentDocument[] = await this.apartmentModel.find(
+      building,
+    );
 
     if (!apartments.length)
       throw new NotFoundException('No apartments found on asked location');
@@ -103,12 +101,9 @@ export class ApatrmentsService {
     return modifiedApartment;
   }
 
-  async razeBuildingRent(
-    razeBuildingRentDto: RazeBuildingRentDto,
-    precentage: number,
-  ) {
+  async razeBuildingRent(buildingDto: BuildingDto, precentage: number) {
     const apartments: ApartmentDocument[] = await this.apartmentModel.find(
-      razeBuildingRentDto,
+      buildingDto,
     );
 
     if (!apartments.length)
