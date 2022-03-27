@@ -9,9 +9,8 @@ export class AppController {
   constructor(private authService: AuthService) {}
 
   @Post('/login')
-  async login(@Body() loginDto: LoginDto) {
-    const { password, username } = loginDto;
+  async login(@Body() { password, username }: LoginDto) {
     const user = await this.authService.validateUser(username, password);
-    return this.authService.login(user);
+    return this.authService.getJWT(user);
   }
 }
