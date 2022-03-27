@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateApatrmentDto } from './dto/create-apatrment.dto';
 import { UpdateApatrmentDto } from './dto/update-apatrment.dto';
-import { Apartment } from './schemas/apatrment.schema';
+import { Apartment, ApartmentDocument } from './schemas/apatrment.schema';
 import { Model } from 'mongoose';
 import { ContactsService } from 'src/contacts/contacts.service';
 import { Contact } from 'src/contacts/schemas/contact.schema';
@@ -56,6 +56,21 @@ export class ApatrmentsService {
 
     const removedApartment = await this.apartmentModel.findByIdAndRemove(id);
     return removedApartment;
+  }
+
+  async removeBuilding(city: string, street: string, buildingNumber: number) {
+    const apartments: ApartmentDocument[] = await this.apartmentModel.find({
+      City: city,
+      Street: street,
+      BuildingNumber: buildingNumber,
+    });
+
+    if (!apartments.length)
+      throw new NotFoundException('No apartments found on asked location');
+
+    return apartments.map(
+      async (apartment) => await this.remove(apartment._id.toString()),
+    );
   }
 
   async removeAll() {
