@@ -21,18 +21,12 @@ export class UpdateApatrmentDto extends PartialType(CreateApatrmentDto) {
   Street: string;
 
   @IsNumber()
-  @ApiProperty({
-    description: 'The building number of an apartment',
-    required: true,
-  })
+  @ApiProperty({ description: 'The building number of an apartment' })
   @IsOptional()
   BuildingNumber: number;
 
   @IsNumber()
-  @ApiProperty({
-    description: 'The number of rooms of an apartment',
-    required: true,
-  })
+  @ApiProperty({ description: 'The number of rooms of an apartment' })
   @IsOptional()
   NumberOfRooms: number;
 
