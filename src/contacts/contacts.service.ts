@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact, ContactDocument } from './schemas/contact.schema';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 
 @Injectable()
 export class ContactsService {
@@ -51,8 +51,8 @@ export class ContactsService {
     return createdContacts;
   }
 
-  async findAll() {
-    return await this.contactModel.find().populate('Apartment');
+  async findAll(filter: FilterQuery<Contact>) {
+    return await this.contactModel.find(filter).populate('Apartment');
   }
 
   async findOne(id: string): Promise<ContactDocument | null> {
