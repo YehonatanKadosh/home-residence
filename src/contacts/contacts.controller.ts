@@ -109,6 +109,18 @@ export class ContactsController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Contact Not Found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Delete('/phoneNumber/:phoneNumber')
+  removeByPhoneNumber(@Param('phoneNumber') phoneNumber: string) {
+    return this.contactsService.removeByPhoneNumber(phoneNumber);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(userRoles.Admin)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiOkResponse({ description: 'OK' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Contact Not Found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.contactsService.remove(id);
